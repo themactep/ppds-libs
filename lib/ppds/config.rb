@@ -22,7 +22,10 @@ module Ppds
     end
 
     def set(name, value)
-      gconf[key_from_name(name)] = value
+      key = key_from_name(name)
+      gconf[key] = value
+    rescue
+      "Cannot set #{key} to #{value}"
     end
 
     def drop(name)
@@ -34,20 +37,18 @@ module Ppds
     end
 
     def destroy
-      for one in all
-        gconf.unset(one.key)
-      end
+      all.each { |one| gconf.unset(one.key) }
       save
     end
 
-    private
+  private
 
     def name_from_key(key)
       key.split('/').last
     end
 
     def key_from_name(name)
-      [ @root, name ].join("/")
+      [ @root, name ].join('/')
     end
 
   end
